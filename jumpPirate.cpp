@@ -37,7 +37,7 @@ int main( void )
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Open a window and create its OpenGL context
-	window = glfwCreateWindow( 1024, 600, "Tutorial 07 - Model Loading", NULL, NULL);
+	window = glfwCreateWindow( 1350, 750, "JumpPirate Game", NULL, NULL);
 	if( window == NULL ){
 		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
 		getchar();
@@ -95,8 +95,12 @@ int main( void )
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals; // Won't be used at the moment.
-	bool res = loadOBJ("cube.obj", vertices, uvs, normals);
-
+	bool res = loadOBJ("obj/Mesa.obj", vertices, uvs, normals);
+	printf("Mesa carregada com sucesso...\n");
+	bool res2 = loadOBJ("obj/Barril.obj", vertices, uvs, normals);
+	printf("Barril carregado com sucesso...\n");
+	bool res3 = loadOBJ("obj/Espada.obj", vertices, uvs, normals);
+	printf("Espada carregada com sucesso...\n");
 	// Load it into a VBO
 
 	GLuint vertexbuffer;
