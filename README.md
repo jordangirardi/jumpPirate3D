@@ -1,6 +1,6 @@
 # jumpPirate3D-OpenGl
-O presente repositório se refere a um trabalho acadêmico da disciplina de Computação Gráfica II do curso de Engenharia da Computaçãod a Universidade do Oeste 
-de Santa Catarina - UNOESC
+O presente repositório se refere a um trabalho acadêmico da disciplina de Computação Gráfica II do curso de Engenharia da Computação da Universidade do Oeste 
+de Santa Catarina - UNOESC.
 O projeto envolve a modelagem e o desenvolvimento do Jogo JumpPirate em 3D através da API Gráfica open source OpenGl.
 
 ## Modelagem e renderização dos objetos 3D
