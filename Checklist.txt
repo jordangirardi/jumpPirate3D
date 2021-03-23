@@ -1,0 +1,8 @@
+coisas a fazer no trabalho:
+
+Dar opcao para visualização de camera: (Utilziar comandos de teclado para troca (f1 frente, f2 cima e f3 traz))
+Frente, traz e cima;
+
+Alterar camera entre perspective ou ortogonal  (Através da tecla P)
+
+Criar uma breve animacao 360° da cena (Através da telca enter)
