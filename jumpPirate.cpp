@@ -96,11 +96,9 @@ int main( void )
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals; // Won't be used at the moment.
 	bool res = loadOBJ("obj/Mesa.obj", vertices, uvs, normals);
-	printf("Mesa carregada com sucesso...\n");
 	bool res2 = loadOBJ("obj/Barril.obj", vertices, uvs, normals);
-	printf("Barril carregado com sucesso...\n");
 	bool res3 = loadOBJ("obj/Espada.obj", vertices, uvs, normals);
-	printf("Espada carregada com sucesso...\n");
+	bool res4 = loadOBJ("obj/Cabeca.obj", vertices, uvs, normals);
 	// Load it into a VBO
 
 	GLuint vertexbuffer;
