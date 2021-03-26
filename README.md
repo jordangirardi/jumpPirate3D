@@ -8,4 +8,4 @@ A modelagem dos objetos foi feita utilizando o Software livre de modelagem Blend
 
 ### Projeto de renderização OpenGl
 A OpenGl possui em sua documentação diversos tutoriais, incluindo um "playground", projeto que serve como base para construir as aplicações de renderização. Neste
-escopo já estão inclusos as principais dependências necessárias para executar a aplicação utilizando o processamento direto da GPU, bastando assim, apenas implementar o código extra de acordo com a necessidade do projeto. 
+escopo já estão inclusos as principais dependências necessárias para executar a aplicação utilizando o processamento direto da GPU, bastando assim, apenas implementar o código extra de acordo com a necessidade do projeto
