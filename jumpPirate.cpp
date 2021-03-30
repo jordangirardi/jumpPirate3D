@@ -58,7 +58,7 @@ int main( void )
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     // Hide the mouse and enable unlimited mouvement
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     
     // Set the mouse at the center of the screen
     glfwPollEvents();
@@ -120,11 +120,22 @@ int main( void )
 		glUseProgram(programID);
 
 		// Compute the MVP matrix from keyboard and mouse input
-		computeMatricesFromInputs();
-		glm::mat4 ProjectionMatrix = getProjectionMatrix();
-		glm::mat4 ViewMatrix = getViewMatrix();
+
+		glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(45.0f), 16.0f / 9.0f, 0.1f, 100.0f);
+		// glm::mat4 ProjectionMatrix = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f);
+
+		glm::mat4 ViewMatrix = glm::lookAt(
+			glm::vec3( 0, 25, 50 ), // Camera is here
+			glm::vec3( 0, 10, 0 ), // and looks here
+			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+		);
+
 		glm::mat4 ModelMatrix = glm::mat4(1.0);
-		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+
+		vec3 gPosition1(5.0f, 0.0f, 0.0f);
+		glm::mat4 TranslationMatrix = translate(mat4(), gPosition1); 
+
+		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix * TranslationMatrix;
 
 		// Send our transformation to the currently bound shader, 
 		// in the "MVP" uniform

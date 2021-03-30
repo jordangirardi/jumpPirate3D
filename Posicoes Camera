@@ -1,0 +1,33 @@
+// coordenadas visao frontal
+		glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+		// glm::mat4 ProjectionMatrix = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f);
+
+		glm::mat4 ViewMatrix = glm::lookAt(
+			glm::vec3( 0, 25, 50 ), // Camera is here
+			glm::vec3( 0, 10, 0 ), // and looks here
+			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+		);
+
+		glm::mat4 ModelMatrix = glm::mat4(1.0);
+
+		vec3 gPosition1(5.0f, 0.0f, 0.0f);
+		glm::mat4 TranslationMatrix = translate(mat4(), gPosition1); 
+
+		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix * TranslationMatrix;
+
+
+
+// coordenadas visao back 
+
+glm::mat4 ViewMatrix = glm::lookAt(
+			glm::vec3( 0, 25, -60 ), // Camera is here
+			glm::vec3( -8, 10, 0 ), // and looks here
+			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+		);
+
+// coordenadas visão topo
+glm::mat4 ViewMatrix = glm::lookAt(
+			glm::vec3( 0, 60, 0 ), // Camera is here
+			glm::vec3( -8, 0, 0 ), // and looks here
+			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+		);
