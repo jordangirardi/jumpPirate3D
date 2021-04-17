@@ -20,6 +20,34 @@ using namespace glm;
 #include <common/controls.hpp>
 #include <common/objloader.hpp>
 
+int tipoExibicao = 0;//0 - Front[F1] (default) | 1[f2] - Top | 2[f3] - Back 
+
+
+
+void alterarVisao(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if(action == GLFW_PRESS){
+		printf("FOI\n\n");
+		switch(key){
+			case GLFW_KEY_F1:
+			tipoExibicao = 0;
+			break;
+
+			case GLFW_KEY_F2:
+			tipoExibicao = 1;
+			break;
+
+			case GLFW_KEY_F3:
+			tipoExibicao = 2;
+			break;
+		}
+	}
+    
+}
+
+
+
+
 int main( void )
 {
 	// Initialise GLFW
@@ -35,6 +63,8 @@ int main( void )
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	
+
 
 	// Open a window and create its OpenGL context
 	window = glfwCreateWindow( 1350, 768, "JumpPirate Game", NULL, NULL);
@@ -54,6 +84,7 @@ int main( void )
 		glfwTerminate();
 		return -1;
 	}
+
 
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -110,8 +141,119 @@ int main( void )
 	glGenBuffers(1, &uvbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
 	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+	
+
+	double lastTime = glfwGetTime();
+	double lastFrameTime = lastTime;
+	int nbFrames = 0;
+
+	int tipoExibicao = 0;
+	bool isExibirPerspective = false;
+	bool isExibirAnimacao = false;
+	bool isAnimacaoVoltando = false;
+
+	int deslocCamera = 0;
 
 	do{
+		double currentTime = glfwGetTime();
+		float deltaTime = (float)(currentTime - lastFrameTime); 
+		lastFrameTime = currentTime;
+		nbFrames++;
+
+		if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1sec ago
+			printf("%f ms/frame\n", 1000.0/double(nbFrames));
+			nbFrames = 0;
+			lastTime += 0.1;
+			printf("\n Tipoexibicao: %d\n", tipoExibicao);
+			
+
+			if(glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS){
+				tipoExibicao = 0;
+			}
+
+			if(glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS){
+				tipoExibicao = 1;
+			}
+
+			if(glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS){
+				tipoExibicao = 2;
+			}
+
+			if(glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS){
+				if(isExibirPerspective){
+					isExibirPerspective = false;
+				}else{
+					isExibirPerspective = true;
+				}
+			}
+
+			if(glfwGetKey(window, GLFW_KEY_ENTER)){
+				isExibirAnimacao = true;
+			}
+
+			if(isExibirAnimacao){
+				if(deslocCamera > 50 || isAnimacaoVoltando){
+					deslocCamera--;
+					isAnimacaoVoltando = true;
+					if(deslocCamera < 25){
+						isExibirAnimacao = false;
+						isAnimacaoVoltando = false;
+					}
+				}else{
+					deslocCamera++;
+				}
+			}
+		}
+		
+		//front view - DEFAULT 
+		glm::mat4 ViewMatrix = glm::lookAt(
+		    glm::vec3( 0, 25, 50 ), // Camera is here
+		    glm::vec3( 0, 10, 0 ), // and looks here
+		    glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+		);
+
+		if(isExibirAnimacao){
+			ViewMatrix = glm::lookAt(
+		    glm::vec3( deslocCamera, deslocCamera, 25), // Camera is here
+		    glm::vec3( 0, 10, 0 ), // and looks here
+		    glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+		);
+		}else{
+
+			if(tipoExibicao == 1){
+			ViewMatrix = glm::lookAt(
+			glm::vec3( 0, 60, 0 ), // Camera is here
+			glm::vec3( -8, 0, 0 ), // and looks here
+			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+			);
+			} 
+		
+			if(tipoExibicao == 2){
+			ViewMatrix = glm::lookAt(
+			glm::vec3( 0, 25, -60 ), // Camera is here
+			glm::vec3( -8, 10, 0 ), // and looks here
+			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
+			);
+			}
+		}
+
+		
+
+
+
+		glm::mat4 ProjectionMatrix = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f);
+
+		// if(isExibirPerspective){
+			ProjectionMatrix = glm::perspective(glm::radians(45.0f), 16.0f / 9.0f, 0.1f, 100.0f);
+		// }
+
+
+		// if(isExibirAnimacao){
+		// 	while(contadorAnimacao < 40){
+
+		// 		contadorAnimacao++;
+		// 	}
+		// }
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -120,15 +262,6 @@ int main( void )
 		glUseProgram(programID);
 
 		// Compute the MVP matrix from keyboard and mouse input
-
-		glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(45.0f), 16.0f / 9.0f, 0.1f, 100.0f);
-		// glm::mat4 ProjectionMatrix = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f);
-
-		glm::mat4 ViewMatrix = glm::lookAt(
-			glm::vec3( 0, 25, 50 ), // Camera is here
-			glm::vec3( 0, 10, 0 ), // and looks here
-			glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
-		);
 
 		glm::mat4 ModelMatrix = glm::mat4(1.0);
 
