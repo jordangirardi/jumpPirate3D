@@ -163,7 +163,7 @@ int main( void )
 		if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1sec ago
 			printf("%f ms/frame\n", 1000.0/double(nbFrames));
 			nbFrames = 0;
-			lastTime += 0.1;
+			lastTime += 0.5;
 			printf("\n Tipoexibicao: %d\n", tipoExibicao);
 			
 
@@ -237,23 +237,12 @@ int main( void )
 			}
 		}
 
-		
-
-
 
 		glm::mat4 ProjectionMatrix = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f);
 
-		// if(isExibirPerspective){
+		if(!isExibirPerspective){
 			ProjectionMatrix = glm::perspective(glm::radians(45.0f), 16.0f / 9.0f, 0.1f, 100.0f);
-		// }
-
-
-		// if(isExibirAnimacao){
-		// 	while(contadorAnimacao < 40){
-
-		// 		contadorAnimacao++;
-		// 	}
-		// }
+		}
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
