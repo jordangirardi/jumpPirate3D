@@ -117,10 +117,18 @@ int main( void )
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
 	// Load the texture
-	GLuint Texture = loadDDS("uvmap.DDS");
+	GLuint Texture_barrel = loadDDS("barrel_TEXTTURE.dds");
+	GLuint Texture_table = loadDDS("uv_table.dds");
+	GLuint Texture_bartolomeu = loadDDS("uv_bartolomeu.dds");
+	GLuint Texture_sword = loadDDS("uv_sword.dds");
 	
 	// Get a handle for our "myTextureSampler" uniform
-	GLuint TextureID  = glGetUniformLocation(programID, "myTextureSampler");
+	GLuint TextureID01  = glGetUniformLocation(programID, "textura_01");
+	GLuint TextureID02  = glGetUniformLocation(programID, "textura_02");
+	GLuint TextureID03  = glGetUniformLocation(programID, "textura_03");
+	GLuint TextureID04  = glGetUniformLocation(programID, "textura_04");
+
+
 
 	// Read our .obj file
 	std::vector<glm::vec3> vertices;
@@ -163,7 +171,7 @@ int main( void )
 		if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1sec ago
 			printf("%f ms/frame\n", 1000.0/double(nbFrames));
 			nbFrames = 0;
-			lastTime += 0.5;
+			lastTime += 0.2;
 			printf("\n Tipoexibicao: %d\n", tipoExibicao);
 			
 
@@ -264,10 +272,24 @@ int main( void )
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
 		// Bind our texture in Texture Unit 0
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, Texture);
+		glActiveTexture(GL_TEXTURE0+0);
+		glBindTexture(GL_TEXTURE_2D, Texture_barrel);
+
+		glActiveTexture(GL_TEXTURE0 + 1);
+		glBindTexture(GL_TEXTURE_2D, Texture_table);
+
+		glActiveTexture(GL_TEXTURE0 + 2);
+		glBindTexture(GL_TEXTURE_2D, Texture_bartolomeu);
+
+		glActiveTexture(GL_TEXTURE0 + 3);
+		glBindTexture(GL_TEXTURE_2D, Texture_sword);
+
 		// Set our "myTextureSampler" sampler to use Texture Unit 0
-		glUniform1i(TextureID, 0);
+		glUniform1i(TextureID01, 0);
+		glUniform1i(TextureID02, 1);
+		glUniform1i(TextureID03, 2);
+		glUniform1i(TextureID04, 3);
+
 
 		// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
@@ -311,7 +333,12 @@ int main( void )
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteBuffers(1, &uvbuffer);
 	glDeleteProgram(programID);
-	glDeleteTextures(1, &Texture);
+
+	glDeleteTextures(1, &Texture_barrel);
+	glDeleteTextures(1, &Texture_sword);
+	glDeleteTextures(1, &Texture_table);
+	glDeleteTextures(1, &Texture_bartolomeu);
+
 	glDeleteVertexArrays(1, &VertexArrayID);
 
 	// Close OpenGL window and terminate GLFW
