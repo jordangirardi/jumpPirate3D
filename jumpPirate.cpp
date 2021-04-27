@@ -23,31 +23,6 @@ using namespace glm;
 int tipoExibicao = 0;//0 - Front[F1] (default) | 1[f2] - Top | 2[f3] - Back 
 
 
-
-void alterarVisao(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	if(action == GLFW_PRESS){
-		printf("FOI\n\n");
-		switch(key){
-			case GLFW_KEY_F1:
-			tipoExibicao = 0;
-			break;
-
-			case GLFW_KEY_F2:
-			tipoExibicao = 1;
-			break;
-
-			case GLFW_KEY_F3:
-			tipoExibicao = 2;
-			break;
-		}
-	}
-    
-}
-
-
-
-
 int main( void )
 {
 	// Initialise GLFW
@@ -117,27 +92,42 @@ int main( void )
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
 	// Load the texture
-	GLuint Texture_barrel = loadDDS("barrel_TEXTTURE.dds");
-	GLuint Texture_table = loadDDS("uv_table.dds");
-	GLuint Texture_bartolomeu = loadDDS("uv_bartolomeu.dds");
-	GLuint Texture_sword = loadDDS("uv_sword.dds");
+	GLuint Texture_barrel = loadDDS("DDS/barrel_TEXTTURE.dds");
+	GLuint Texture_table = loadDDS("DDS/uv_table.dds");
+	GLuint Texture_bartolomeu = loadDDS("DDS/uv_bartolomeu.dds");
+	GLuint Texture_sword = loadDDS("DDS/uv_sword.dds");
 	
 	// Get a handle for our "myTextureSampler" uniform
-	GLuint TextureID01  = glGetUniformLocation(programID, "textura_01");
-	GLuint TextureID02  = glGetUniformLocation(programID, "textura_02");
-	GLuint TextureID03  = glGetUniformLocation(programID, "textura_03");
-	GLuint TextureID04  = glGetUniformLocation(programID, "textura_04");
+	GLuint TextureID01  = glGetUniformLocation(programID, "myTextureSampler0");
+	GLuint TextureID02  = glGetUniformLocation(programID, "myTextureSampler1");
+	GLuint TextureID03  = glGetUniformLocation(programID, "myTextureSampler2");
+	GLuint TextureID04  = glGetUniformLocation(programID, "myTextureSampler3");
 
-
+	//pegando flag de identificacao textura
+	GLuint flagTextura = glGetUniformLocation(programID, "flag");
 
 	// Read our .obj file
+
+	//vetor size objs
+	std::vector<int> tamanho;
+
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals; // Won't be used at the moment.
-	bool res = loadOBJ("obj/Mesa.obj", vertices, uvs, normals);
+
 	bool res2 = loadOBJ("obj/Barril.obj", vertices, uvs, normals);
+	tamanho.push_back(vertices.size());
+
+	bool res = loadOBJ("obj/Mesa.obj", vertices, uvs, normals);
+	tamanho.push_back(vertices.size());
+
+	bool res4 = loadOBJ("obj/bartolomeu.obj", vertices, uvs, normals);
+	tamanho.push_back(vertices.size());
+	
 	bool res3 = loadOBJ("obj/Espada.obj", vertices, uvs, normals);
-	bool res4 = loadOBJ("obj/Cabeca.obj", vertices, uvs, normals);
+	tamanho.push_back(vertices.size());
+
+
 	// Load it into a VBO
 
 	GLuint vertexbuffer;
@@ -149,7 +139,6 @@ int main( void )
 	glGenBuffers(1, &uvbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
 	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
-	
 
 	double lastTime = glfwGetTime();
 	double lastFrameTime = lastTime;
@@ -173,7 +162,7 @@ int main( void )
 			nbFrames = 0;
 			lastTime += 0.2;
 			printf("\n Tipoexibicao: %d\n", tipoExibicao);
-			
+
 
 			if(glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS){
 				tipoExibicao = 0;
@@ -245,7 +234,6 @@ int main( void )
 			}
 		}
 
-
 		glm::mat4 ProjectionMatrix = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f);
 
 		if(!isExibirPerspective){
@@ -269,26 +257,7 @@ int main( void )
 
 		// Send our transformation to the currently bound shader, 
 		// in the "MVP" uniform
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-		// Bind our texture in Texture Unit 0
-		glActiveTexture(GL_TEXTURE0+0);
-		glBindTexture(GL_TEXTURE_2D, Texture_barrel);
-
-		glActiveTexture(GL_TEXTURE0 + 1);
-		glBindTexture(GL_TEXTURE_2D, Texture_table);
-
-		glActiveTexture(GL_TEXTURE0 + 2);
-		glBindTexture(GL_TEXTURE_2D, Texture_bartolomeu);
-
-		glActiveTexture(GL_TEXTURE0 + 3);
-		glBindTexture(GL_TEXTURE_2D, Texture_sword);
-
-		// Set our "myTextureSampler" sampler to use Texture Unit 0
-		glUniform1i(TextureID01, 0);
-		glUniform1i(TextureID02, 1);
-		glUniform1i(TextureID03, 2);
-		glUniform1i(TextureID04, 3);
 
 
 		// 1rst attribute buffer : vertices
@@ -315,8 +284,31 @@ int main( void )
 			(void*)0                          // array buffer offset
 		);
 
-		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size() );
+
+
+		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+		// Bind our texture in Texture Unit 0
+
+		glActiveTexture(TextureID01);		
+		glUniform1i(flagTextura, 0);
+		glBindTexture(GL_TEXTURE_2D, Texture_barrel);
+		glDrawArrays(GL_TRIANGLES, 0, tamanho[0]);
+
+		glActiveTexture(TextureID02);	
+		glUniform1i(flagTextura, 1);
+		glBindTexture(GL_TEXTURE_2D, Texture_table);
+		glDrawArrays(GL_TRIANGLES, tamanho[0], tamanho[1]-tamanho[0]);
+
+		glActiveTexture(TextureID03);	
+		glUniform1i(flagTextura, 2);
+		glBindTexture(GL_TEXTURE_2D, Texture_bartolomeu);
+		glDrawArrays(GL_TRIANGLES, tamanho[1], tamanho[2]-tamanho[1]);
+
+		glActiveTexture(TextureID04);	
+		glUniform1i(flagTextura, 3);
+		glBindTexture(GL_TEXTURE_2D, Texture_sword);
+		glDrawArrays(GL_TRIANGLES, tamanho[2], tamanho[3]-tamanho[2]);
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
