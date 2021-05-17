@@ -91,6 +91,13 @@ int main( void )
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
+	GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
+	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
+
+	//lighting definition
+
+
 	// Load the texture
 	GLuint Texture_barrel = loadDDS("DDS/barrel_TEXTTURE.dds");
 	GLuint Texture_table = loadDDS("DDS/uv_table.dds");
@@ -139,6 +146,7 @@ int main( void )
 	glGenBuffers(1, &uvbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
 	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+	
 
 	double lastTime = glfwGetTime();
 	double lastFrameTime = lastTime;
@@ -201,10 +209,11 @@ int main( void )
 				}
 			}
 		}
+
 		
 		//front view - DEFAULT 
 		glm::mat4 ViewMatrix = glm::lookAt(
-		    glm::vec3( 0, 25, 50 ), // Camera is here
+		    glm::vec3( 0, 25, 35 ), // Camera is here
 		    glm::vec3( 0, 10, 0 ), // and looks here
 		    glm::vec3( 0, 1, 0 )  // Head is up (set to 0,-1,0 to look upside-down)
 		);
@@ -246,19 +255,12 @@ int main( void )
 		// Use our shader
 		glUseProgram(programID);
 
-		// Compute the MVP matrix from keyboard and mouse input
-
-		glm::mat4 ModelMatrix = glm::mat4(1.0);
 
 		vec3 gPosition1(5.0f, 0.0f, 0.0f);
 		glm::mat4 TranslationMatrix = translate(mat4(), gPosition1); 
+		glm::mat4 ModelMatrix = TranslationMatrix;
 
-		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix * TranslationMatrix;
-
-		// Send our transformation to the currently bound shader, 
-		// in the "MVP" uniform
-
-
+		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 
 		// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
@@ -284,11 +286,13 @@ int main( void )
 			(void*)0                          // array buffer offset
 		);
 
-
-
+		
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
 
-		// Bind our texture in Texture Unit 0
+		glm::vec3 lightPos = glm::vec3(4, 4, 4);
+		glUniform3f(LightID, 8, 8, 8);
 
 		glActiveTexture(TextureID01);		
 		glUniform1i(flagTextura, 0);
